@@ -40,24 +40,29 @@ async def receive_message(request: Request):
         if not chat_id:
             raise ValueError("Chat ID is missing.")
 
+        # Filter out items with empty titles
+        valid_items = [item for item in items if item['title'].strip()]
+
+        if not valid_items:
+            raise ValueError("All items must have a non-empty title.")
+
         # Convert prices to the smallest unit of the given currency (e.g., cents for USD, pence for GBP)
         multiplier = 100  # Default multiplier for most currencies (like USD, EUR, GBP)
-
-        # Adjust if a different currency with a different smallest unit factor is used
-        if currency in ['USD', 'EUR', 'GBP']:
-            multiplier = 100  # 1 unit = 100 cents/pence/etc.
 
         # Create labeled price list and calculate the correct total amount
         prices = [
             LabeledPrice(label=item['title'], amount=int(float(item['price']) * multiplier) * item['quantity'])
-            for item in items
+            for item in valid_items
         ]
 
-        # Calculate the correct total amount in the smallest currency unit
-        total_amount = sum(price.amount for price in prices)
+        # Calculate the correct total amount using only valid items
+        calculated_total_amount = sum(price.amount for price in prices)
+
+        # Convert the provided total to the smallest unit and validate it against the calculated total
+        provided_total_amount = int(float(total) * multiplier)
 
         # Validate that the calculated total matches the provided total
-        if total_amount != int(float(total) * multiplier):
+        if calculated_total_amount != provided_total_amount:
             raise ValueError("The total amount does not match the sum of item prices.")
 
         # Send invoice using the /sendInvoice command
