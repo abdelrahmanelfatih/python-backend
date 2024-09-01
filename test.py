@@ -6,7 +6,7 @@ from telegram.ext import Application, CommandHandler, ContextTypes
 import asyncio
 import threading
 
-TELEGRAM_TOKEN = '7301010584:AAFRMvnjkI8bKMnkERH3jTUdIYYYmwGIS9c'  # Replace with your actual Telegram bot token
+TELEGRAM_TOKEN = 'YOUR_BOT_TOKEN'  # Replace with your actual Telegram bot token
 
 app = FastAPI()
 
@@ -66,7 +66,7 @@ async def receive_message(request: Request):
             title="Invoice",
             description="Your purchase details",
             payload="custom-payload",
-            provider_token="284685063:TEST:NGZiNDgxNWFjY2I0",  # Replace with your payment provider token
+            provider_token="YOUR_PROVIDER_TOKEN",  # Replace with your payment provider token
             currency=currency,
             prices=prices,
             need_name=require_name,
